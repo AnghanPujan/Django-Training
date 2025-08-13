@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+</head>
+<body>
+    <h1>Register</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Renders form fields wrapped in <p> tags -->
+        <button type="submit">Submit</button>
+    </form>
+
+</body>
+</html>

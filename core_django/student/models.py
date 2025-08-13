@@ -8,3 +8,11 @@ class student(models.Model):
     std_class = models.CharField(max_length=10)
     def __str__(self):
         return self.name
+    
+class StudentUser(models.Model):
+    user_name = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254)
+
+    def __str__(self):
+        return self.user_name
