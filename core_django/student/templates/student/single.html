@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Student Data</title>
+</head>
+<body>
+  <h1>Student Data</h1>
+
+  {% if student %}
+        <p><li>{{student.roll}} - {{ student.name }} — Age: {{ student.age }}</li></p>
+  {% else %}
+    <p>No student records found.</p>
+  {% endif %}
+
+</body>
+</html>
