@@ -48,22 +48,29 @@ def register(request):
 def login(request):
     if request.method == "POST":
         form = StudentLoginForm(request.POST)
-        if form.is_valid():    
+        if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
             try:
-                user_data = StudentUser.objects.get(email=email)
+                user = StudentUser.objects.get(email=email)
             except StudentUser.DoesNotExist:
-                messages.error(request, "No user found with that email.")
+                messages.error(request, "No account found with that email.")
                 return redirect('login')
 
-            if user_data.password == password:  # For production, use password hashing
+            # For production: use check_password(password, user.password)
+            if user.password == password:
                 messages.success(request, "Login successful!")
-                return redirect('home')  # Redirect to a home/dashboard page
+                return redirect('home')
             else:
                 messages.error(request, "Invalid password.")
                 return redirect('login')
     else:
         form = StudentLoginForm()
-        return render(request, 'student/login.html', {'form': form})
+
+    return render(request, 'student/login.html', {'form': form})
+
+
+def home(request):
+    return render(request, 'student/home.html')
+
