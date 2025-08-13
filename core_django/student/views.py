@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from student.models import student, StudentUser
-from .StudentRegisterForm import StudentRegisterForm  # Use a clear class name
+from .StudentRegisterForm import StudentRegisterForm, StudentLoginForm  # Use a clear class name
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 
@@ -17,13 +17,53 @@ def single(request):
 def register(request):
     if request.method == "POST":
         form = StudentRegisterForm(request.POST)
-        pass
         if form.is_valid():
+            user_name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            cpassword = form.cleaned_data['cpassword']
+
+            if password != cpassword:
+                messages.error(request, "Passwords do not match.")
+                return redirect('register')
+
+            if StudentUser.objects.filter(email=email).exists():
+                messages.error(request, "Email already registered.")
+                return redirect('register')
+
+            # Save new user (for production: use make_password(password))
             StudentUser.objects.create(
-                user_name=form.cleaned_data['name'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password']
+                user_name=user_name,
+                email=email,
+                password=password
             )
+            messages.success(request, "Registration successful! Please log in.")
+            return redirect('login')
     else:
         form = StudentRegisterForm()
+
     return render(request, 'student/register.html', {'form': form})
+
+
+def login(request):
+    if request.method == "POST":
+        form = StudentLoginForm(request.POST)
+        if form.is_valid():    
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            try:
+                user_data = StudentUser.objects.get(email=email)
+            except StudentUser.DoesNotExist:
+                messages.error(request, "No user found with that email.")
+                return redirect('login')
+
+            if user_data.password == password:  # For production, use password hashing
+                messages.success(request, "Login successful!")
+                return redirect('home')  # Redirect to a home/dashboard page
+            else:
+                messages.error(request, "Invalid password.")
+                return redirect('login')
+    else:
+        form = StudentLoginForm()
+        return render(request, 'student/login.html', {'form': form})
