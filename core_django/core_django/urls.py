@@ -12,7 +12,8 @@ urlpatterns = [
     path('contact/', contact, name='contact'),
     path('success-page/', success_page, name='success_page'),
     path('recipe/', add_recipe, name='recipe'),
-    path('student/',include('student.urls'))
+    path('student/',include('student.urls')),
+    path('teacher/',include('teacher.urls'))
 ]
 
 if settings.DEBUG:
